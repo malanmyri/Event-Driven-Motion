@@ -56,19 +56,17 @@ def Boltzmann_comparison(vel_start, vel_end,v, m = m_02):
     Figure comparing the three distributions.
     '''
 
-    f,(ax1, ax2, ax3) = plt.subplots(1,3, figsize = (15,5))
+    fig =plt.figure(figsize = (15,5))
 
-    counts, bins = np.histogram(vel_start)
-    ax1.stairs(counts, bins)
-    ax1.set_title("Plot of the velocity at the beginning")
+    counts_1, bins_1 = np.histogram(vel_start)
+    counts_2, bins_2 = np.histogram(vel_end)
 
-    counts, bins = np.histogram(vel_end)
-    ax2.stairs(counts, bins)
-    ax2.set_title("Velocity at the end")
-
-    ax3.plot(v,boltsmann(v, m))
-    ax3.set_title("Plot of the Boltsmanns Distribution")
-    return f
+    plt.stairs(counts_1, bins_1, label = "vel_start" )
+    plt.stairs(counts_2, bins_2, label = "vel_end" )
+    plt.plot(v,boltsmann(v, m), label = "Boltzmann" )
+    plt.title( "Comparing the velocity distributions")
+    plt.legend()
+    return fig
 
 
 def plotting_evolution(x_list,y_list,vx_list,vy_list):
