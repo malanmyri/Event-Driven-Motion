@@ -2,7 +2,7 @@ import numpy as np
 from heapq import*
 import typing
 from particle_classes import *
-np.random.seed(0)
+from random import sample
 
 class system: 
     def __init__(self, 
@@ -31,25 +31,27 @@ class system:
         self.average_particle_collision = 0
     
     def uniform_particles(self):
-        p_x =np.random.random_integers(self.radius[0], int((self.x_lim- self.radius[0])/self.radius[0]/2), self.num_particles)[0]*2*self.radius[0]
-        p_y = np.random.random_integers(self.radius[0], int((self.x_lim- self.radius[0])/self.radius[0]/2), self.num_particles)[0]*2*self.radius[0]
+        positions = set([])
+        while len(positions) <self.num_particles:
+            p_x= np.random.randint(1, int((self.x_lim- self.radius[0])/self.radius[0]), 1)[0]*(self.radius[0])
+            p_y= np.random.randint(1, int((self.y_lim- self.radius[0])/self.radius[0]),  1)[0]*(self.radius[0])
+            
+            positions.add(position(p_x,p_y))
 
-        theta = np.random.uniform(0, 2*np.pi, self.num_particles)
-        
+        theta = np.random.uniform(0, 2*np.pi, size=self.num_particles)
+        positions = list(positions)
         if len(self.mass) ==1:
             for i in range(self.num_particles):
-                p = position(p_x[i], p_y[i])
+                
                 vel = velocity(np.cos(theta[i])*self.mean_velocity, np.sin(theta[i])*self.mean_velocity)
-                self.particles.append(particle(p, vel, self.radius[0], self.mass[0]))
+                self.particles.append(particle(positions[i], vel, self.radius[0], self.mass[0]))
         if len(self.mass) == 2: 
             for i in range(int(self.num_particles/2)):
-                p = position(p_x[i], p_y[i])
                 vel = velocity(np.cos(theta[i])*self.mean_velocity, np.sin(theta[i])*self.mean_velocity)
-                self.particles.append(particle(p, vel, self.radius[0], self.mass[0]))
+                self.particles.append(particle(positions[i], vel, self.radius[0], self.mass[0]))
             for i in range(int(self.num_particles/2), self.num_particles):
-                p = position(p_x[i], p_y[i])
                 vel = velocity(np.cos(theta[i])*self.mean_velocity, np.sin(theta[i])*self.mean_velocity)
-                self.particles.append(particle(p, vel, self.radius[0], self.mass[1]))
+                self.particles.append(particle(positions[i], vel, self.radius[0], self.mass[1]))
     
     
     def crater(self):
@@ -93,8 +95,11 @@ class system:
                     heappush(self.collisions, (delta_t+ self.current_time, c))
                 else:
                     self.invalid_time.append(self.current_time)
+    def find_collisions(self):
+        for p in self.particles: 
+            self.find_collisions_particle(p)   
 
-    def update(self):
+    def update_step(self):
         no_valid_collision = True
         particles = []
         while no_valid_collision:
@@ -208,3 +213,17 @@ class system:
         #Update Collision count 
         pj.collision_count +=1 
         pi.collision_count +=1
+
+
+    def return_velocities(self):
+        vel = np.zeros(self.num_particles)
+        i = 0
+        for p in self.particles:
+            vel[i] = np.sqrt(p.velocity.vx**2 + p.velocity.vy**2)
+            i+=1
+        return vel
+    
+    def update(self,times):
+        for time in range(times): 
+            self.update_step()
+
