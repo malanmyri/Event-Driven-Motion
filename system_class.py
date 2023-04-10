@@ -29,6 +29,14 @@ class system:
         self.invalid_time =[]
         self.particle_collisions = 0
         self.average_particle_collision = 0
+
+
+        #Used in the calculation of convergence
+        self.vel_curr = np.zeros((num_particles))
+        self.vel_prior = np.ones((num_particles))* self.mean_velocity
+        self.tol = None
+        self.collision_length = []
+
     
     def uniform_particles(self):
         positions = set([])
@@ -53,6 +61,30 @@ class system:
                 vel = velocity(np.cos(theta[i])*self.mean_velocity, np.sin(theta[i])*self.mean_velocity)
                 self.particles.append(particle(positions[i], vel, self.radius[0], self.mass[1]))
     
+    def convergence(self):
+        '''
+        Returns True if solution has converged
+        Returns False if solution has not converged
+        '''
+        i = 0
+        for p in self.particles:
+            self.vel_curr[i] = np.sqrt(p.velocity.vx**2 + p.velocity.vy**2)
+            i+=1
+        
+        sqr_prior = sum((np.ones(self.num_particles)*self.mean_velocity- self.vel_prior)**2 /self.num_particles)
+        sqr_curr =  sum((np.ones(self.num_particles)*self.mean_velocity- self.vel_curr)**2 /self.num_particles)
+
+        self.vel_prior = self.vel_curr.copy()
+        print(abs(sqr_prior - sqr_curr))
+        if abs(sqr_prior - sqr_curr) < self.tol: 
+            return True
+        else: 
+            return False
+
+
+
+
+
     
     def crater(self):
         for num in range(self.num_particles):
@@ -226,4 +258,6 @@ class system:
     def update(self,times):
         for time in range(times): 
             self.update_step()
+            self.collision_length.append(len(self.collisions))
+            
 
