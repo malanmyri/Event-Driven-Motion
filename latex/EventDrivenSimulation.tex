@@ -1,0 +1,118 @@
+\documentclass{article}	
+
+\makeatletter
+\def\ps@pprintTitle{
+ \let\@oddhead\@empty
+ \let\@evenhead\@empty
+ \@date
+ \let\@evenfoot\@oddfoot}
+
+ \makeatother
+
+
+ %\addbibresource{/referanseliste.bib}
+\usepackage{multicol,lipsum,etoolbox}
+ 
+\makeatletter
+\newcount\saved@colnumber
+\newenvironment{escapemulticol}
+ {}
+ {\aftergroup\restore@multicols}
+\BeforeBeginEnvironment{escapemulticol}{%
+  \global\saved@colnumber=\col@number
+  \end{multicols}%
+}
+\def\restore@multicols{\begin{multicols}{\saved@colnumber}}
+\makeatother
+
+
+\usepackage{gensymb}
+\usepackage{comment}
+% Encoding for input i tex-filen og encoding for output i pdf-filen
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+%\usepackage[clean]{svg}
+
+
+
+% Last inn en font-pakke. Her bruker vi standard-fonten til LaTeX. 
+\usepackage{lmodern}
+
+% LaTeX gjør mye av typografien for deg, blant annet orddeling ved linjeskift og automatisk utfylling av endel tekst. For å kunne gjøre dette må kompilatoren vite hvilket språk dokumentet er skrevet på. 
+\usepackage[english]{babel}
+\usepackage[fixlanguage]{babelbib}
+\usepackage[babel=true]{microtype}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+
+% Måltall og enheter er spesielle typografiske dyr som reguleres av strenge regler. For å gjøre det enklere å håndtere tall og enheter på riktig måte bruker vi pakken siunitx.
+\usepackage{siunitx}
+% Vi tilpasser standardinstillingene til pakken til norske regler. 
+
+\sisetup{
+exponent-product = \cdot,
+output-decimal-marker  =  {.}, % Pass på å endre desimalskilletegnet til punktum om du skriver på engelsk!
+separate-uncertainty = true,
+per-mode = symbol,
+group-digits = false,
+}
+
+\usepackage{graphicx} % Denne pakken er standard for å kunne laste inn figurfiler med ulike formater
+% Løsne opp på de alt for strenge standardinstillingene for plassering av figurer og tabeller (floats) i LaTeX-kjernen
+\usepackage{import}     % Enable importing of sections
+\renewcommand{\topfraction}{.85}
+\renewcommand{\bottomfraction}{.7}
+\renewcommand{\textfraction}{.15}
+\renewcommand{\floatpagefraction}{.66}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{10}
+
+\usepackage{flafter} % For å plassere floats i PDFen første sted LaTeX tillater etter det punktet de er definert i TeX-filen. Om du definerer figuren i TeX-filen rett etter at du refererer til den for første gang vil denne pakken sørge for at de fleste floats havner på greie steder
+
+\usepackage{booktabs} % Denne pakken gir tilgang på endel ekstra kommandoer som legger til rette for god skikk og bruk i tabellformatering.
+\usepackage{multirow}
+
+\usepackage[font=small,labelfont=bf]{caption}	% Justering av LaTeX standarder for figurtekst og tabelltekst.
+
+\usepackage{svg}
+\usepackage[margin=0.5in]{geometry}
+
+
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+
+\urlstyle{same}
+
+\usepackage{chemformula}
+\usepackage{graphicx}
+\usepackage{animate}
+
+\begin{document}
+
+\title{Event Driven Motion}
+%\author[fysikk]{M.~Myri}
+%\address[fysikk]{Institute of Physics, Norwegian University of Science and Technology, 7491 Trondheim.}
+\date{April 25, 2023}
+\maketitle
+
+\begin{multicols}{2}
+
+\import{./sections/}{Introduction}
+%\import{./sections/}{Theory}
+\import{./sections/}{Method and results}
+
+\import{./sections/}{Discussion}
+\import{./sections/}{Conclusion}
+
+%\import{./sections/}{Reference}
+
+%magick convert -coalesce images/giphy.gif images/giphy.png
+
+
+\end{multicols}
+
+
+\end{document}

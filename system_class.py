@@ -32,10 +32,12 @@ class system:
 
 
         #Used in the calculation of convergence
-        self.vel_curr = np.zeros((num_particles))
-        self.vel_prior = np.ones((num_particles))* self.mean_velocity
+        self.vel_curr = []
+        self.vel_prior =[self.mean_velocity]
         self.list_of_differences = []
         self.collision_length = []
+        self.number_of_vel_mean =[]
+        self.tol = 0.1
 
     
     def uniform_particles(self):
@@ -62,16 +64,28 @@ class system:
                 self.particles.append(particle(positions[i], vel, self.radius[0], self.mass[1]))
     
     def convergence(self):
+
+        if len(self.mass) ==1:
+            count = 0
+            for p in self.particles:
+                if  abs(np.sqrt(p.velocity.vx**2 + p.velocity.vy**2) - self.mean_velocity) < self.tol:
+
+                    count+=1
+            
+            self.number_of_vel_mean.append(count)
+
+        '''
         if len(self.mass) ==1:
             i = 0
             for p in self.particles:
-                self.vel_curr[i] = np.sqrt(p.velocity.vx**2 + p.velocity.vy**2)
-                i+=1
+                if  np.sqrt(p.velocity.vx**2 + p.velocity.vy**2) != self.mean_velocity:
+                    self.vel_curr.append(np.sqrt(p.velocity.vx**2 + p.velocity.vy**2))
             
-            sqr_prior = sum((np.ones(self.num_particles)*self.mean_velocity- self.vel_prior)**2 /self.num_particles)
-            sqr_curr =  sum((np.ones(self.num_particles)*self.mean_velocity- self.vel_curr)**2 /self.num_particles)
+            sqr_prior = sum((np.ones(len(self.vel_prior))*self.mean_velocity- self.vel_prior)**2 /len(self.vel_prior))
+            sqr_curr =  sum((np.ones(len(self.vel_curr))*self.mean_velocity- self.vel_curr)**2 /len(self.vel_curr))
 
-            self.vel_prior = self.vel_curr.copy()
+            self.vel_prior = self.vel_curr
+            self.vel_curr = []
             print(abs(sqr_prior - sqr_curr))
             self.list_of_differences.append(abs(sqr_prior - sqr_curr))
         
@@ -91,7 +105,7 @@ class system:
 
             self.vel_prior = self.vel_curr.copy()
             self.list_of_differences.append([abs(sqr_prior_m_O2 - sqr_curr_m_O2),abs(sqr_prior_4m_O2 - sqr_curr_4m_O2)])
-
+        '''
 
 
 
